@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para ti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0c0c0f;
+    --surface: #131318;
+    --border: rgba(255,255,255,0.06);
+    --text-primary: #e8e4df;
+    --text-secondary: rgba(232,228,223,0.45);
+    --text-muted: rgba(232,228,223,0.22);
+    --accent: #c9a96e;
+    --accent-soft: rgba(201,169,110,0.12);
+    --accent-glow: rgba(201,169,110,0.06);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── SCREEN SYSTEM ── */
+  .screen {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem 2rem;
+    position: relative;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+    pointer-events: none;
+  }
+  .screen.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+  .screen.hidden {
+    display: none;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+    z-index: 100;
+  }
+
+  /* ── SCREEN 1 ── */
+  #s1 { text-align: center; }
+
+  .s1-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 3.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.3s forwards;
+  }
+
+  .s1-main {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    line-height: 1.55;
+    color: var(--text-primary);
+    max-width: 480px;
+    opacity: 0;
+    animation: fadeUp 1s 0.6s forwards;
+  }
+
+  .s1-main span {
+    display: block;
+  }
+
+  .s1-main .highlight {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  .s1-divider {
+    width: 1px;
+    height: 3rem;
+    background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+    margin: 3rem auto;
+    opacity: 0;
+    animation: fadeIn 1s 1.2s forwards;
+  }
+
+  /* ── BUTTON ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 2.2rem;
+    border: 1px solid rgba(201,169,110,0.3);
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    animation: fadeUp 1s 1.5s forwards;
+  }
+  .btn:hover {
+    background: rgba(201,169,110,0.2);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .btn svg { transition: transform 0.3s ease; }
+  .btn:hover svg { transform: translateX(3px); }
+
+  /* ── SCREEN 2 ── */
+  #s2 { text-align: center; }
+
+  .s2-intro {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    line-height: 1.7;
+    max-width: 520px;
+    margin-bottom: 4rem;
+  }
+
+  .s2-intro em {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .float-words {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 480px;
+  }
+
+  .float-word {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 200;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    padding: 0.5rem 1.2rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    animation: floatWord 6s ease-in-out infinite;
+    opacity: 0;
+    transition: color 0.3s, border-color 0.3s;
+  }
+
+  .float-word:hover {
+    color: var(--accent);
+    border-color: rgba(201,169,110,0.3);
+  }
+
+  .float-word:nth-child(1) { animation-delay: 0s; }
+  .float-word:nth-child(2) { animation-delay: 0.7s; }
+  .float-word:nth-child(3) { animation-delay: 1.4s; }
+  .float-word:nth-child(4) { animation-delay: 2.1s; }
+  .float-word:nth-child(5) { animation-delay: 2.8s; }
+
+  @keyframes floatWord {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* ── SCREEN 3 ── */
+  #s3 { padding: 4rem 2rem; }
+
+  .s3-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    max-width: 520px;
+    width: 100%;
+    background: var(--border);
+  }
+
+  .card {
+    background: var(--bg);
+    padding: 1.8rem 2rem;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    transition: background 0.4s ease;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  .card:hover {
+    background: var(--surface);
+  }
+
+  .card:hover::before {
+    transform: scaleY(1);
+  }
+
+  .card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+    opacity: 0.7;
+  }
+
+  .card-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+
+  /* ── SCREEN 4 — TERMINAL ── */
+  #s4 { align-items: flex-start; }
+
+  .terminal {
+    width: 100%;
+    max-width: 540px;
+    background: #0a0a0d;
+    border: 1px solid var(--border);
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    overflow: hidden;
+  }
+
+  .terminal-bar {
+    background: var(--surface);
+    padding: 0.7rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+  }
+  .dot-r { background: #3a1a1a; }
+  .dot-y { background: #3a2e1a; }
+  .dot-g { background: #1a3a1a; }
+
+  .terminal-title {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .terminal-body {
+    padding: 1.8rem;
+    min-height: 280px;
+  }
+
+  .t-line {
+    font-size: 0.78rem;
+    line-height: 2;
+    color: var(--text-secondary);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .t-line.show { opacity: 1; }
+  .t-line.cmd { color: var(--text-muted); }
+  .t-line.check { color: #7ab89a; }
+  .t-line.result {
+    color: var(--accent);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+  .t-cursor {
+    display: inline-block;
+    width: 7px; height: 1em;
+    background: var(--accent);
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+    opacity: 0;
+  }
+  .t-cursor.show { opacity: 1; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ── SCREEN 5 ── */
+  #s5 { text-align: center; }
+
+  .s5-main {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.5rem, 4.5vw, 2.5rem);
+    font-weight: 300;
+    line-height: 1.65;
+    max-width: 500px;
+    margin-bottom: 3.5rem;
+  }
+
+  .s5-main em { color: var(--accent); font-style: italic; }
+
+  .soft-phrases {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    max-width: 380px;
+  }
+
+  .soft-phrase {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 200;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    position: relative;
+    padding-left: 1.2rem;
+  }
+  .soft-phrase::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    opacity: 0.5;
+  }
+
+  /* ── SCREEN 6 — CIERRE ── */
+  #s6 { text-align: center; }
+
+  .s6-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .s6-glyph {
+    width: 48px; height: 48px;
+    opacity: 0.4;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.05); }
+  }
+
+  .s6-main {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.3rem, 4vw, 2rem);
+    line-height: 1.8;
+    max-width: 460px;
+    color: var(--text-primary);
+  }
+
+  .s6-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 200;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+  }
+
+  .s6-heart {
+    font-size: 1.1rem;
+    animation: heartbeat 2.5s ease-in-out infinite;
+  }
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.15); opacity: 1; }
+  }
+
+  /* ── NAV DOTS ── */
+  #nav-dots {
+    position: fixed;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    z-index: 50;
+  }
+  .nav-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.4s ease;
+  }
+  .nav-dot.active {
+    background: var(--accent);
+    transform: scale(1.5);
+  }
+
+  /* ── AMBIENT LIGHT ── */
+  .ambient {
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    transition: all 1.5s ease;
+  }
+  #amb1 {
+    background: radial-gradient(circle, rgba(201,169,110,0.04) 0%, transparent 70%);
+    top: -200px; left: -200px;
+  }
+  #amb2 {
+    background: radial-gradient(circle, rgba(100,120,160,0.03) 0%, transparent 70%);
+    bottom: -200px; right: -200px;
+  }
+
+  /* ── UTILITY ANIMATIONS ── */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(16px); }
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+    from { opacity: 0; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    .cards-grid { max-width: 100%; }
+    .terminal { font-size: 0.7rem; }
+    #nav-dots { right: 0.8rem; }
+  }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.3;
+    animation: scrollBounce 2s ease-in-out infinite;
+  }
+  .scroll-hint span {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(5px); }
+  }
+
+  /* stagger utility for s-entries */
+  .entry { opacity: 0; transform: translateY(18px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .entry.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="amb1" class="ambient"></div>
+<div id="amb2" class="ambient"></div>
+
+<!-- NAV DOTS -->
+<nav id="nav-dots">
+  <div class="nav-dot active" onclick="goTo(0)"></div>
+  <div class="nav-dot" onclick="goTo(1)"></div>
+  <div class="nav-dot" onclick="goTo(2)"></div>
+  <div class="nav-dot" onclick="goTo(3)"></div>
+  <div class="nav-dot" onclick="goTo(4)"></div>
+  <div class="nav-dot" onclick="goTo(5)"></div>
+</nav>
+
+<!-- ═══════════════════════════════════════════ SCREEN 1 -->
+<section class="screen active" id="s1">
+  <p class="s1-eyebrow">Para ti</p>
+  <h1 class="s1-main">
+    <span>Anoche me quedé</span>
+    <span>pensando mucho</span>
+    <span style="margin-top:0.5em; display:block; font-style:normal; font-size:0.7em; color:var(--text-secondary)">No en cómo defenderme</span>
+    <span style="font-size:0.7em; color:var(--text-secondary); font-style:normal">Sino en <em class="highlight">por qué esto te dolió</em></span>
+  </h1>
+  <div class="s1-divider"></div>
+  <button class="btn" onclick="goTo(1)">
+    Continuar
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <div class="scroll-hint">
+    <svg width="12" height="16" viewBox="0 0 12 16" fill="none">
+      <path d="M6 2v10M3 9l3 4 3-4" stroke="var(--text-muted)" stroke-width="1" stroke-linecap="round"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ SCREEN 2 -->
+<section class="screen hidden" id="s2">
+  <p class="s2-intro entry">
+    No estaba haciendo algo malo.<br>
+    Pero entendí que el problema<br>
+    <em>nunca fue solo eso.</em><br>
+    Sino lo que generó en ti.
+  </p>
+  <div class="float-words">
+    <div class="float-word">inseguridad</div>
+    <div class="float-word">cansancio</div>
+    <div class="float-word">silencio</div>
+    <div class="float-word">distancia</div>
+    <div class="float-word">repetición</div>
+  </div>
+  <div style="margin-top:3.5rem">
+    <button class="btn entry" onclick="goTo(2)" style="animation:none; opacity:1; transform:none;">
+      Seguir
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ SCREEN 3 -->
+<section class="screen hidden" id="s3">
+  <p class="s3-label entry">Lo que entendí</p>
+  <div class="cards-grid">
+    <div class="card entry">
+      <div class="card-num">01</div>
+      <p class="card-text">Ocultar cosas pequeñas también rompe confianza</p>
+    </div>
+    <div class="card entry">
+      <div class="card-num">02</div>
+      <p class="card-text">A veces intento evitar problemas y termino creando otros</p>
+    </div>
+    <div class="card entry">
+      <div class="card-num">03</div>
+      <p class="card-text">Decir "no fue nada" no evita el desgaste</p>
+    </div>
+    <div class="card entry">
+      <div class="card-num">04</div>
+      <p class="card-text">Amar también es transmitir tranquilidad</p>
+    </div>
+  </div>
+  <div style="margin-top:2.5rem">
+    <button class="btn entry" onclick="goTo(3)" style="animation:none; opacity:1; transform:none;">
+      Continuar
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ SCREEN 4 — TERMINAL -->
+<section class="screen hidden" id="s4" style="align-items:center;">
+  <div style="width:100%; max-width:540px;">
+    <p class="s3-label entry" style="text-align:left; margin-bottom:1.5rem;">Diagnóstico</p>
+    <div class="terminal entry">
+      <div class="terminal-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <span class="terminal-title">análisis — comportamiento.exe</span>
+      </div>
+      <div class="terminal-body" id="term-body">
+        <div class="t-line cmd show">$ iniciando análisis de comportamiento...</div>
+        <div class="t-line" id="tl1"></div>
+        <div class="t-line check" id="tl2"></div>
+        <div class="t-line check" id="tl3"></div>
+        <div class="t-line check" id="tl4"></div>
+        <div class="t-line check" id="tl5"></div>
+        <div class="t-line" id="tl6"></div>
+        <div class="t-line result" id="tl7"></div>
+        <span class="t-cursor" id="cursor"></span>
+      </div>
+    </div>
+    <div style="margin-top:2.5rem; display:flex; justify-content:center;">
+      <button class="btn" id="s4-btn" onclick="goTo(4)" style="opacity:0; pointer-events:none; transition: opacity 0.6s ease;">
+        Siguiente
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ SCREEN 5 -->
+<section class="screen hidden" id="s5">
+  <p class="s5-main entry">
+    No quería que pensaras<br>
+    que no pienso en ti.<br>
+    <em>Porque realmente eres</em><br>
+    <em>una de las personas más</em><br>
+    <em>importantes de mi vida.</em>
+  </p>
+  <div class="soft-phrases">
+    <p class="soft-phrase entry">la distancia vuelve más sensibles los silencios</p>
+    <p class="soft-phrase entry">las pequeñas acciones pesan más</p>
+    <p class="soft-phrase entry">y lo entendí tarde</p>
+  </div>
+  <div style="margin-top:3rem">
+    <button class="btn entry" onclick="goTo(5)" style="animation:none; opacity:1; transform:none;">
+      Ir al final
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ SCREEN 6 -->
+<section class="screen hidden" id="s6">
+  <div class="s6-wrap">
+    <svg class="s6-glyph" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="24" cy="24" r="23" stroke="var(--accent)" stroke-width="0.5"/>
+      <circle cx="24" cy="24" r="15" stroke="var(--accent)" stroke-width="0.5" opacity="0.4"/>
+      <line x1="24" y1="8" x2="24" y2="40" stroke="var(--accent)" stroke-width="0.5" opacity="0.3"/>
+      <line x1="8" y1="24" x2="40" y2="24" stroke="var(--accent)" stroke-width="0.5" opacity="0.3"/>
+    </svg>
+
+    <p class="s6-main entry">
+      No hice esto para prometerte perfección.<br>
+      Solo quería mostrarte<br>
+      que me detuve a pensar<br>
+      de verdad.
+    </p>
+
+    <span class="s6-heart entry">🤍</span>
+
+    <p class="s6-sub entry" style="margin-top:0.5rem;">con calma, y con todo</p>
+  </div>
+</section>
+
+
+<script>
+  // ── STATE ──
+  let current = 0;
+  const screens = document.querySelectorAll('.screen');
+  const dots = document.querySelectorAll('.nav-dot');
+  const progressBar = document.getElementById('progress');
+  let terminalDone = false;
+
+  // ── NAVIGATE ──
+  function goTo(idx) {
+    if (idx === current) return;
+    screens[current].style.opacity = '0';
+    screens[current].style.transform = 'translateY(-12px)';
+    setTimeout(() => {
+      screens[current].classList.add('hidden');
+      screens[current].classList.remove('active');
+      current = idx;
+      screens[current].classList.remove('hidden');
+      requestAnimationFrame(() => {
+        screens[current].classList.add('active');
+        animateEntries(screens[current]);
+        if (idx === 3 && !terminalDone) runTerminal();
+      });
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+      updateProgress();
+    }, 400);
+  }
+
+  function updateProgress() {
+    progressBar.style.width = ((current / (screens.length - 1)) * 100) + '%';
+  }
+
+  // ── ENTRY ANIMATIONS ──
+  function animateEntries(screen) {
+    const entries = screen.querySelectorAll('.entry');
+    entries.forEach((el, i) => {
+      el.style.transitionDelay = (i * 0.12) + 's';
+      requestAnimationFrame(() => el.classList.add('visible'));
+    });
+    // float words
+    const words = screen.querySelectorAll('.float-word');
+    words.forEach((w, i) => {
+      setTimeout(() => { w.style.opacity = ''; }, 300 + i * 150);
+    });
+  }
+
+  // ── TERMINAL ──
+  function runTerminal() {
+    terminalDone = true;
+    const lines = [
+      { id: 'tl1', text: '', delay: 600, cls: '' },
+      { id: 'tl2', text: '✔  miedo al conflicto', delay: 1200, cls: 'check' },
+      { id: 'tl3', text: '✔  malas costumbres repetidas', delay: 2000, cls: 'check' },
+      { id: 'tl4', text: '✔  poca claridad en momentos importantes', delay: 2800, cls: 'check' },
+      { id: 'tl5', text: '✔  dificultad para pensar como pareja', delay: 3600, cls: 'check' },
+      { id: 'tl6', text: '', delay: 4400, cls: '' },
+      { id: 'tl7', text: '"Hay cosas que sí necesitan cambiar"', delay: 5000, cls: 'result' },
+    ];
+
+    const cursor = document.getElementById('cursor');
+    setTimeout(() => cursor.classList.add('show'), 400);
+
+    lines.forEach(({ id, text, delay, cls }) => {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = text;
+          el.className = 't-line show ' + cls;
+        }
+      }, delay);
+    });
+
+    setTimeout(() => {
+      cursor.classList.remove('show');
+      const btn = document.getElementById('s4-btn');
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    }, 5800);
+  }
+
+  // ── KEYBOARD NAV ──
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      if (current < screens.length - 1) goTo(current + 1);
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      if (current > 0) goTo(current - 1);
+    }
+  });
+
+  // ── SWIPE ──
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', e => {
+    touchX = e.touches[0].clientX;
+    touchY = e.touches[0].clientY;
+  });
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchX;
+    const dy = e.changedTouches[0].clientY - touchY;
+    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 40) {
+      if (dy < 0 && current < screens.length - 1) goTo(current + 1);
+      if (dy > 0 && current > 0) goTo(current - 1);
+    }
+  });
+
+  // ── INIT ──
+  updateProgress();
+  animateEntries(screens[0]);
+</script>
+</body>
+</html>
