@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>🐄 Para ti</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;1,9..144,200;1,9..144,300&family=DM+Mono:wght@300;400&family=Syne:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -280,9 +282,17 @@ body{background:var(--cr);color:var(--tx);font-family:'DM Mono',monospace;font-w
     Solo quería mostrarte<br>que me detuve a pensar<br>de verdad.
   </p>
   <p class="finale-note e">con calma, y con todo 🤍</p>
-  <button class="confetti-btn e" onclick="launchConfetti(); setTimeout(()=> window.open('https://wa.me/573134029218?text=Hola%20%F0%9F%90%84%20vi%20tu%20mensaje%20y%20quiero%20hablar%20contigo', '_blank'), 1500)">
-    🐄 Si quieres hablar, toca aquí 🌻
-  </button>
+  <button class="confetti-btn e"
+  onclick="
+    launchConfetti();
+    setTimeout(() => {
+      window.open('https://wa.me/573134029218', '_blank');
+    }, 1500);
+  ">
+
+  <i class="fa-brands fa-whatsapp"></i>
+    🐄 Si quieres hablar, toca aquí de lo contrario entendere 😣🌻
+</button>
 </section>
 
 <script>
