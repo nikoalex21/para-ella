@@ -2,991 +2,1345 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>🐄 Para ti</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;1,9..144,200;1,9..144,300&family=DM+Mono:wght@300;400&family=Syne:wght@400;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elecciones Presidenciales del Corazón 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IM+Fell+English+SC&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --cr:#faf6ef;--cr2:#f0e8d8;--cr3:#e5d9c3;
-  --br:#2c1a0e;--br2:#5c3d28;--br3:#9a6b45;
-  --gd:#c8902a;--gd2:rgba(200,144,42,0.18);
-  --bl:#1a3a2a;--gr:#2d5a3d;
-  --tx:#2c1a0e;--tx2:#7a5c40;--tx3:#b89878;
-  --wh:#ffffff;
-  --bdr:rgba(44,26,14,0.1);
-}
-html,body{height:100%;overflow:hidden;touch-action:none}
-body{
-  background:var(--cr);
-  color:var(--tx);
-  font-family:'DM Mono',monospace;
-  font-weight:300;
-  cursor:none;
-  position:relative;
-  user-select:none;
-}
+  :root {
+    --azul: #0a2463;
+    --azul-medio: #1a3a8f;
+    --azul-claro: #2d5be3;
+    --dorado: #c9a84c;
+    --dorado-brillante: #f5d97a;
+    --dorado-oscuro: #8a6a1a;
+    --blanco: #f8f5ee;
+    --crema: #f0e8d0;
+    --gris: #d4c9aa;
+    --negro: #1a1208;
+    --rojo: #c0392b;
+    --verde-check: #27ae60;
+  }
 
-/* ── CUSTOM CURSOR ── */
-#cursor{
-  position:fixed;width:20px;height:20px;
-  pointer-events:none;z-index:9999;
-  transition:transform 0.15s ease;
-  font-size:18px;line-height:1;
-  transform:translate(-50%,-50%);
-}
-#cursor-trail{
-  position:fixed;width:8px;height:8px;
-  background:var(--gd);border-radius:50%;
-  pointer-events:none;z-index:9998;
-  opacity:0.4;
-  transform:translate(-50%,-50%);
-  transition:left 0.12s ease,top 0.12s ease;
-}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ── CANVAS BG ── */
-#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+  body {
+    background: linear-gradient(160deg, #0a1628 0%, #0d2045 40%, #0a1628 100%);
+    min-height: 100vh;
+    font-family: 'Libre Baskerville', serif;
+    color: var(--negro);
+    overflow-x: hidden;
+  }
 
-/* ── SCREENS ── */
-.screen{
-  position:fixed;inset:0;
-  display:flex;flex-direction:column;
-  justify-content:center;align-items:center;
-  padding:2rem 1.5rem;
-  z-index:10;
-  opacity:0;
-  pointer-events:none;
-  text-align:center;
-  transition:opacity 0.6s ease,transform 0.6s cubic-bezier(0.16,1,0.3,1);
-  transform:translateY(30px);
-  overflow:hidden;
-}
-.screen.active{opacity:1;transform:translateY(0);pointer-events:all;}
+  /* Estrellas de fondo */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 75%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 85%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(2px 2px at 90% 10%, rgba(201,168,76,0.5) 0%, transparent 100%),
+      radial-gradient(2px 2px at 5% 90%, rgba(201,168,76,0.4) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-/* ── PROGRESS ── */
-#pgbar{
-  position:fixed;top:0;left:0;height:3px;
-  background:linear-gradient(90deg,var(--gd),#e8b44a);
-  transition:width 0.6s ease;z-index:999;
-}
-#pgcow{
-  position:fixed;top:-1px;
-  font-size:16px;line-height:1;
-  transition:left 0.6s ease;
-  z-index:999;transform:translateX(-50%);
-}
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
 
-/* ── PHASE LABEL ── */
-#phase-label{
-  position:fixed;top:16px;left:50%;transform:translateX(-50%);
-  font-size:0.58rem;letter-spacing:0.22em;text-transform:uppercase;
-  color:var(--tx3);z-index:100;
-  transition:opacity 0.4s;
-}
+  /* ===================== TARJETON ===================== */
+  .tarjeton {
+    background: var(--blanco);
+    border: 3px solid var(--dorado);
+    border-radius: 4px;
+    box-shadow:
+      0 0 0 1px var(--dorado-oscuro),
+      0 0 40px rgba(201,168,76,0.3),
+      0 25px 80px rgba(0,0,0,0.7),
+      inset 0 0 60px rgba(240,232,208,0.5);
+    overflow: hidden;
+    position: relative;
+  }
 
-/* ══════════════ SCREEN 0 — SPLASH ══════════════ */
-.splash-field{
-  position:relative;width:100%;max-width:380px;height:200px;
-  margin-bottom:1.5rem;
-}
-.field-grass{
-  position:absolute;bottom:0;left:0;right:0;height:60px;
-  background:linear-gradient(to top,#3a7a4a,#5aaa6a);
-  border-radius:4px 4px 0 0;
-  overflow:hidden;
-}
-.field-sky{
-  position:absolute;top:0;left:0;right:0;bottom:60px;
-  background:linear-gradient(to bottom,#c8e8f8,#e8f4f8);
-  border-radius:4px 4px 0 0;
-}
-.splash-cow{
-  position:absolute;bottom:50px;left:50%;transform:translateX(-50%);
-  font-size:4rem;cursor:pointer;
-  animation:graze 3s ease-in-out infinite;
-  transition:transform 0.2s;
-  z-index:5;
-}
-.splash-cow:hover{transform:translateX(-50%) scale(1.15);}
-.splash-cow:active{transform:translateX(-50%) scale(0.9);}
-@keyframes graze{
-  0%,100%{transform:translateX(-50%) translateY(0);}
-  50%{transform:translateX(-46%) translateY(-4px);}
-}
-.cloud{
-  position:absolute;font-size:1.6rem;
-  animation:cloudMove linear infinite;opacity:0.8;
-}
-@keyframes cloudMove{
-  0%{left:-60px;}100%{left:calc(100% + 60px);}
-}
-.moo-bubble{
-  position:absolute;
-  background:var(--wh);border:2px solid var(--br);
-  border-radius:12px 12px 12px 0;
-  padding:0.4rem 0.8rem;
-  font-size:0.7rem;font-family:'Syne',sans-serif;font-weight:700;
-  color:var(--br);white-space:nowrap;
-  bottom:130px;left:55%;
-  opacity:0;transform:scale(0);
-  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  pointer-events:none;
-}
-.moo-bubble.show{opacity:1;transform:scale(1);}
+  /* Marca de agua */
+  .tarjeton::before {
+    content: 'OFICIAL';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-family: 'Playfair Display', serif;
+    font-size: 120px;
+    font-weight: 900;
+    color: rgba(201,168,76,0.06);
+    pointer-events: none;
+    z-index: 0;
+    white-space: nowrap;
+    letter-spacing: 20px;
+  }
 
-.splash-title{
-  font-family:'Fraunces',serif;
-  font-size:clamp(1.4rem,5vw,2.2rem);
-  font-style:italic;font-weight:200;
-  line-height:1.4;color:var(--br);
-  margin-bottom:0.8rem;
-}
-.splash-hint{
-  font-size:0.65rem;letter-spacing:0.18em;
-  color:var(--tx3);margin-bottom:2rem;
-  animation:blink2 2s ease-in-out infinite;
-}
-@keyframes blink2{0%,100%{opacity:0.4;}50%{opacity:1;}}
+  /* ---- CABECERA ---- */
+  .cabecera {
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 100%);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--dorado);
+    position: relative;
+    gap: 12px;
+  }
 
-/* ══════════════ BTN ══════════════ */
-.btn{
-  display:inline-flex;align-items:center;gap:0.6rem;
-  padding:0.85rem 2rem;
-  background:var(--br);color:var(--cr);
-  font-family:'Syne',sans-serif;font-weight:700;
-  font-size:0.75rem;letter-spacing:0.1em;
-  text-transform:uppercase;cursor:pointer;
-  border:none;border-radius:2px;
-  transition:all 0.25s ease;
-}
-.btn:hover{background:var(--br2);transform:translateY(-2px) scale(1.02);}
-.btn:active{transform:scale(0.97);}
-.btn-ghost{
-  background:transparent;border:1.5px solid var(--br3);
-  color:var(--br);
-}
-.btn-ghost:hover{background:var(--gd2);border-color:var(--gd);}
+  .cabecera::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--dorado-brillante), transparent);
+  }
 
-/* ══════════════ SCREEN 1 — CLICK STARS ══════════════ */
-.stars-instruction{
-  font-size:0.7rem;letter-spacing:0.15em;color:var(--tx3);
-  margin-bottom:2rem;text-transform:uppercase;
-}
-.stars-instruction span{color:var(--gd);}
-.star-field{
-  width:100%;max-width:340px;height:220px;
-  border:1px solid var(--bdr);
-  background:var(--cr2);
-  border-radius:8px;
-  position:relative;overflow:hidden;
-  margin-bottom:1.5rem;cursor:crosshair;
-}
-.star-field::before{
-  content:'Toca el campo para plantar';
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  font-size:0.65rem;color:var(--tx3);letter-spacing:0.12em;
-  text-transform:uppercase;pointer-events:none;
-  transition:opacity 0.4s;
-}
-.star-field.planted::before{opacity:0;}
-.planted-item{
-  position:absolute;font-size:1.4rem;
-  transform:translate(-50%,-50%) scale(0);
-  animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
-  pointer-events:none;
-}
-@keyframes popIn{to{transform:translate(-50%,-50%) scale(1);}}
-.plant-counter{
-  font-family:'Fraunces',serif;font-style:italic;font-size:1rem;
-  color:var(--br2);margin-bottom:1.5rem;
-}
-#s1-unlock{
-  opacity:0;transform:translateY(10px);
-  transition:all 0.5s cubic-bezier(0.16,1,0.3,1);
-  pointer-events:none;
-}
-#s1-unlock.show{opacity:1;transform:translateY(0);pointer-events:all;}
+  .logo-registraduria {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+  }
 
-/* ══════════════ SCREEN 2 — DRAG THE TRUTH ══════════════ */
-.drag-label{
-  font-size:0.7rem;letter-spacing:0.15em;color:var(--tx3);
-  margin-bottom:1.5rem;text-transform:uppercase;
-}
-.drag-arena{
-  width:100%;max-width:340px;
-  position:relative;min-height:280px;
-  margin-bottom:1.2rem;
-}
-.truth-card{
-  position:absolute;
-  background:var(--wh);
-  border:1px solid var(--bdr);
-  border-radius:6px;
-  padding:0.9rem 1.1rem;
-  font-family:'Fraunces',serif;
-  font-size:0.82rem;font-style:italic;
-  color:var(--br);line-height:1.5;
-  cursor:grab;box-shadow:0 2px 12px rgba(44,26,14,0.08);
-  width:calc(50% - 8px);
-  transition:box-shadow 0.2s,transform 0.1s;
-  touch-action:none;
-}
-.truth-card:active{cursor:grabbing;box-shadow:0 8px 28px rgba(44,26,14,0.18);transform:scale(1.04) rotate(1deg);}
-.truth-card.placed{
-  cursor:default;
-  background:linear-gradient(135deg,var(--cr2),var(--cr));
-  border-color:var(--gd);
-  border-width:1.5px;
-}
-.drop-zone{
-  width:100%;max-width:340px;
-  min-height:90px;
-  border:2px dashed var(--bdr);
-  border-radius:8px;
-  display:flex;flex-wrap:wrap;gap:8px;
-  padding:12px;
-  align-items:flex-start;
-  transition:border-color 0.3s,background 0.3s;
-  margin-bottom:1rem;
-}
-.drop-zone.over{border-color:var(--gd);background:var(--gd2);}
-.drop-zone-label{
-  font-size:0.6rem;letter-spacing:0.18em;color:var(--tx3);
-  text-transform:uppercase;width:100%;margin-bottom:4px;
-}
-#s2-unlock{
-  opacity:0;transition:opacity 0.5s;pointer-events:none;
-}
-#s2-unlock.show{opacity:1;pointer-events:all;}
+  .escudo {
+    width: 54px;
+    height: 54px;
+    background: radial-gradient(circle at 40% 35%, #f5d97a, #c9a84c 50%, #8a6a1a);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    border: 2px solid var(--dorado-brillante);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4), inset 0 1px 3px rgba(255,255,255,0.4);
+    margin-bottom: 4px;
+  }
 
-/* ══════════════ SCREEN 3 — TERMINAL GAME ══════════════ */
-.terminal-wrap{
-  width:100%;max-width:380px;
-  background:var(--br);
-  border-radius:8px;overflow:hidden;
-  margin-bottom:1.5rem;
-  box-shadow:0 8px 40px rgba(44,26,14,0.25);
-}
-.term-bar{
-  background:#3d2b1f;
-  padding:0.7rem 1rem;
-  display:flex;align-items:center;gap:0.5rem;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-}
-.tdot{width:10px;height:10px;border-radius:50%;}
-.tdot-r{background:#8b3a3a;}.tdot-y{background:#8b7a2a;}.tdot-g{background:#3a7a4a;}
-.term-title{font-size:0.58rem;letter-spacing:0.15em;color:rgba(255,255,255,0.3);margin:0 auto;}
-.term-body{padding:1.4rem;min-height:260px;font-size:0.72rem;line-height:1.9;}
-.tl{color:rgba(255,255,255,0.35);opacity:0;transition:opacity 0.3s;}
-.tl.show{opacity:1;}
-.tl.dim{color:rgba(255,255,255,0.25);}
-.tl.ok{color:#7ac98a;}
-.tl.warn{color:#c8a050;}
-.tl.res{
-  font-family:'Fraunces',serif;font-style:italic;
-  font-size:0.9rem;color:#e8c87a;letter-spacing:0;
-}
-.tl.cmd{color:rgba(255,255,255,0.2);}
-.tcur{
-  display:inline-block;width:7px;height:0.9em;
-  background:#c8902a;vertical-align:text-bottom;
-  animation:blk 1s step-end infinite;opacity:0;
-}
-.tcur.show{opacity:1;}
-@keyframes blk{50%{opacity:0;}}
+  .logo-registraduria span {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 9px;
+    color: var(--dorado);
+    text-align: center;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+  }
 
-/* ══════════════ SCREEN 4 — MEMORY MATCH ══════════════ */
-.memory-intro{
-  font-family:'Fraunces',serif;font-style:italic;
-  font-size:1rem;color:var(--br2);margin-bottom:1.2rem;line-height:1.5;
-}
-.mem-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:8px;width:100%;max-width:320px;
-  margin-bottom:1.2rem;
-}
-.mem-card{
-  aspect-ratio:1;
-  background:var(--br);border-radius:6px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.5rem;cursor:pointer;
-  transition:transform 0.3s ease,box-shadow 0.2s;
-  position:relative;overflow:hidden;
-  border:2px solid transparent;
-}
-.mem-card::before{
-  content:'?';position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Syne',sans-serif;font-weight:700;font-size:1.2rem;
-  color:rgba(255,255,255,0.2);
-  transition:opacity 0.3s;
-}
-.mem-card .face{
-  opacity:0;position:absolute;transition:opacity 0.3s;font-size:1.6rem;
-}
-.mem-card.flipped::before{opacity:0;}
-.mem-card.flipped .face{opacity:1;}
-.mem-card.flipped{
-  background:var(--cr2);border-color:var(--bdr);
-  transform:rotateY(0deg);
-}
-.mem-card.matched{
-  background:linear-gradient(135deg,#d4edda,#c3e6cb);
-  border-color:#5a9a6a;
-  animation:matchPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
-}
-@keyframes matchPop{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
-.mem-card:hover:not(.matched):not(.flipped){transform:scale(1.05);}
-.mem-score{
-  font-size:0.7rem;letter-spacing:0.12em;color:var(--tx3);
-  margin-bottom:1rem;
-}
-.mem-score span{color:var(--gd);font-weight:700;}
-#s4-unlock{opacity:0;transition:opacity 0.5s;pointer-events:none;}
-#s4-unlock.show{opacity:1;pointer-events:all;}
+  .titulo-principal {
+    flex: 1;
+    text-align: center;
+  }
 
-/* ══════════════ SCREEN 5 — EMOTIONAL ══════════════ */
-.emo-particles{position:relative;width:100%;height:80px;margin-bottom:1.5rem;}
-.e-particle{
-  position:absolute;font-size:1.4rem;
-  animation:emoFloat linear infinite;
-  opacity:0.8;
-}
-@keyframes emoFloat{
-  0%{transform:translateY(0) scale(1);opacity:0.8;}
-  50%{transform:translateY(-30px) scale(1.1);opacity:1;}
-  100%{transform:translateY(0) scale(1);opacity:0.8;}
-}
-.emo-main{
-  font-family:'Fraunces',serif;font-weight:200;font-style:italic;
-  font-size:clamp(1.3rem,4.5vw,2rem);
-  line-height:1.75;color:var(--br);
-  max-width:360px;margin-bottom:2rem;
-}
-.emo-main em{color:var(--gd);font-style:normal;font-weight:300;}
-.soft-lines{display:flex;flex-direction:column;gap:0.9rem;max-width:300px;margin-bottom:2rem;}
-.sline{
-  font-size:0.75rem;font-weight:300;
-  color:var(--tx2);padding-left:1.2rem;
-  position:relative;text-align:left;
-  opacity:0;transform:translateX(-10px);
-  transition:all 0.5s ease;
-}
-.sline::before{content:'—';position:absolute;left:0;color:var(--gd);}
-.sline.vis{opacity:1;transform:translateX(0);}
+  .titulo-principal .pre-titulo {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 11px;
+    color: var(--gris);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
 
-/* ══════════════ SCREEN 6 — FINALE ══════════════ */
-.finale-cow{
-  font-size:5rem;display:block;margin-bottom:1rem;
-  animation:heartbeat 2s ease-in-out infinite;
-}
-@keyframes heartbeat{
-  0%,100%{transform:scale(1);}
-  25%{transform:scale(1.08);}
-  50%{transform:scale(1);}
-  75%{transform:scale(1.04);}
-}
-.finale-title{
-  font-family:'Fraunces',serif;font-weight:200;font-style:italic;
-  font-size:clamp(1.2rem,4vw,1.8rem);
-  line-height:1.8;color:var(--br);
-  max-width:360px;margin-bottom:1.5rem;
-}
-.finale-note{
-  font-size:0.68rem;letter-spacing:0.18em;
-  text-transform:uppercase;color:var(--tx3);
-  margin-bottom:2rem;
-}
-.confetti-btn{
-  background:linear-gradient(135deg,var(--gd),#e8a830);
-  color:var(--wh);
-  font-family:'Syne',sans-serif;font-weight:700;
-  border:none;cursor:pointer;
-  padding:1rem 2.4rem;border-radius:2px;
-  font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;
-  transition:all 0.3s;box-shadow:0 4px 20px rgba(200,144,42,0.35);
-}
-.confetti-btn:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(200,144,42,0.45);}
-.confetti-btn:active{transform:scale(0.97);}
+  .titulo-principal h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(18px, 4vw, 30px);
+    font-weight: 900;
+    color: var(--blanco);
+    line-height: 1.1;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 20px rgba(201,168,76,0.3);
+    margin-bottom: 2px;
+  }
 
-/* ── CONFETTI PIECES ── */
-.confetti-piece{
-  position:fixed;font-size:1.2rem;pointer-events:none;
-  z-index:9000;animation:confettiFall linear forwards;
-}
-@keyframes confettiFall{
-  0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
-  100%{transform:translateY(100vh) rotate(720deg);opacity:0;}
-}
+  .titulo-principal .anio {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--dorado), var(--dorado-brillante));
+    color: var(--azul);
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 1px 12px;
+    border-radius: 2px;
+    letter-spacing: 3px;
+  }
 
-/* ── OVERLAY MESSAGE ── */
-.toast{
-  position:fixed;bottom:5rem;left:50%;transform:translateX(-50%) translateY(20px);
-  background:var(--br);color:var(--cr);
-  padding:0.7rem 1.5rem;border-radius:4px;
-  font-size:0.72rem;letter-spacing:0.1em;
-  opacity:0;transition:all 0.4s ease;
-  z-index:500;white-space:nowrap;
-  pointer-events:none;
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .cabecera-derecha {
+    min-width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
 
-/* ── NAV ── */
-#nav-dots{
-  position:fixed;right:14px;top:50%;transform:translateY(-50%);
-  display:flex;flex-direction:column;gap:8px;z-index:100;
-}
-.ndot{
-  width:5px;height:5px;border-radius:50%;
-  background:var(--tx3);opacity:0.3;
-  cursor:pointer;transition:all 0.3s;
-}
-.ndot.on{opacity:1;background:var(--gd);transform:scale(1.6);}
+  .codigo-barra {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 8px;
+    color: var(--dorado);
+    letter-spacing: 1px;
+    opacity: 0.7;
+  }
 
-/* ── ENTRY ANIM ── */
-.e{opacity:0;transform:translateY(16px);transition:opacity 0.7s ease,transform 0.7s ease;}
-.e.v{opacity:1;transform:translateY(0);}
+  .codigo-barra-img {
+    width: 70px;
+    height: 30px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--dorado-oscuro) 0px, var(--dorado-oscuro) 2px,
+      transparent 2px, transparent 4px,
+      var(--dorado) 4px, var(--dorado) 5px,
+      transparent 5px, transparent 7px,
+      var(--dorado-oscuro) 7px, var(--dorado-oscuro) 8px,
+      transparent 8px, transparent 10px
+    );
+    opacity: 0.5;
+  }
+
+  .pag {
+    font-size: 9px;
+    color: var(--gris);
+    font-family: 'IM Fell English SC', serif;
+  }
+
+  /* Banda de fecha */
+  .banda-info {
+    background: linear-gradient(90deg, var(--azul) 0%, #162d6e 100%);
+    padding: 7px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--dorado);
+  }
+
+  .banda-info span {
+    font-family: 'Crimson Text', serif;
+    font-size: 13px;
+    color: var(--crema);
+    letter-spacing: 0.5px;
+  }
+
+  .banda-info .periodo {
+    font-weight: 600;
+    color: var(--dorado);
+  }
+
+  /* Banner instruccion */
+  .banner-instruccion {
+    background: linear-gradient(135deg, #f5d97a 0%, #c9a84c 50%, #f5d97a 100%);
+    padding: 10px 20px;
+    text-align: center;
+    border-bottom: 2px solid var(--dorado-oscuro);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .banner-instruccion::before,
+  .banner-instruccion::after {
+    content: '★';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--azul);
+    opacity: 0.5;
+  }
+  .banner-instruccion::before { left: 15px; }
+  .banner-instruccion::after { right: 15px; }
+
+  .banner-instruccion p {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(14px, 3vw, 20px);
+    font-weight: 700;
+    color: var(--azul);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ---- SUBTITULO ---- */
+  .subtitulo-seccion {
+    background: var(--crema);
+    padding: 10px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--gris);
+  }
+
+  .subtitulo-seccion p {
+    font-family: 'Crimson Text', serif;
+    font-size: 15px;
+    color: var(--azul);
+    font-style: italic;
+  }
+
+  /* ---- GRID CANDIDATOS ---- */
+  .grid-candidatos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    background: var(--crema);
+    padding: 16px;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 500px) {
+    .grid-candidatos {
+      grid-template-columns: 1fr 1fr;
+      padding: 10px;
+      gap: 8px;
+    }
+  }
+
+  /* ---- TARJETA CANDIDATO ---- */
+  .candidato {
+    background: var(--blanco);
+    border: 2px solid #b8a880;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8);
+    user-select: none;
+  }
+
+  .candidato:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(10,36,99,0.25), 0 0 0 1px var(--dorado);
+  }
+
+  .candidato.seleccionado {
+    border: 2px solid var(--dorado);
+    box-shadow:
+      0 0 0 2px var(--dorado-brillante),
+      0 6px 24px rgba(201,168,76,0.4),
+      inset 0 0 20px rgba(245,217,122,0.1);
+    transform: translateY(-2px) scale(1.01);
+  }
+
+  .candidato.seleccionado .candidato-header {
+    background: linear-gradient(135deg, var(--dorado-oscuro) 0%, var(--dorado) 100%);
+  }
+
+  /* Check de selección */
+  .check-seleccion {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: var(--verde-check);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: white;
+    opacity: 0;
+    transform: scale(0) rotate(-90deg);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(39,174,96,0.5);
+  }
+
+  .candidato.seleccionado .check-seleccion {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  .candidato-header {
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 100%);
+    padding: 5px 8px;
+    display: flex;
+    justify-content: space-between;
+    transition: background 0.3s;
+  }
+
+  .candidato-header span {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 9px;
+    color: var(--dorado);
+    letter-spacing: 1px;
+  }
+
+  .foto-container {
+    background: linear-gradient(180deg, #e8e0cc 0%, #d4c8a8 100%);
+    padding: 12px 12px 8px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    border-bottom: 1px solid #c5b88a;
+  }
+
+  .foto-candidato {
+    width: 90px;
+    height: 110px;
+    object-fit: cover;
+    border: 2px solid var(--dorado);
+    border-radius: 2px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: block;
+  }
+
+  /* SVG fallback avatars */
+  .avatar-svg {
+    width: 90px;
+    height: 110px;
+    border: 2px solid var(--dorado);
+    border-radius: 2px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  .candidato-info {
+    padding: 8px 10px 10px;
+  }
+
+  .candidato-nombre {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(15px, 3vw, 19px);
+    font-weight: 900;
+    color: var(--azul);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .partido-logo-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 5px;
+  }
+
+  .partido-icon {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .partido-nombre {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--azul-medio);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .slogan {
+    font-family: 'Crimson Text', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: #5a4a2a;
+    text-align: center;
+    border-top: 1px dashed var(--gris);
+    padding-top: 5px;
+    line-height: 1.4;
+  }
+
+  /* Número del candidato */
+  .numero-candidato {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    width: 22px;
+    height: 22px;
+    background: var(--azul);
+    color: var(--dorado);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1px solid var(--dorado);
+  }
+
+  /* ---- SECCION BOTON ---- */
+  .seccion-boton {
+    background: linear-gradient(180deg, var(--crema) 0%, #e8dfc4 100%);
+    padding: 16px 20px;
+    text-align: center;
+    border-top: 2px solid var(--dorado);
+  }
+
+  .urna-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .urna {
+    font-size: 48px;
+    animation: urna-float 2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+  }
+
+  @keyframes urna-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .btn-votar {
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 50%, var(--azul) 100%);
+    color: var(--dorado-brillante);
+    border: 2px solid var(--dorado);
+    padding: 14px 40px;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(14px, 3vw, 18px);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    box-shadow:
+      0 4px 20px rgba(10,36,99,0.4),
+      0 0 0 1px var(--dorado-oscuro),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-votar::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    width: 60%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .btn-votar:hover::before { left: 150%; }
+
+  .btn-votar:hover {
+    background: linear-gradient(135deg, var(--azul-medio) 0%, var(--azul-claro) 50%, var(--azul-medio) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(10,36,99,0.5), 0 0 15px rgba(201,168,76,0.4);
+  }
+
+  .btn-votar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-votar:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  /* ---- FOOTER ---- */
+  .footer {
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 100%);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 2px solid var(--dorado);
+  }
+
+  .footer span {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 10px;
+    color: var(--dorado);
+    letter-spacing: 1px;
+  }
+
+  /* ===================== MODAL PROCESANDO ===================== */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(5, 12, 35, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.activo {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal-card {
+    background: var(--blanco);
+    border: 3px solid var(--dorado);
+    border-radius: 6px;
+    padding: 36px 40px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 0 60px rgba(201,168,76,0.4), 0 30px 80px rgba(0,0,0,0.7);
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .modal-overlay.activo .modal-card {
+    transform: scale(1) translateY(0);
+  }
+
+  /* ===================== PROCESANDO ===================== */
+  .procesando-icon {
+    font-size: 60px;
+    margin-bottom: 16px;
+    animation: spin-icon 1.5s linear infinite;
+  }
+
+  @keyframes spin-icon {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  .procesando-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--azul);
+    margin-bottom: 20px;
+  }
+
+  .paso-procesando {
+    font-family: 'Crimson Text', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: #5a4a2a;
+    margin-bottom: 20px;
+    min-height: 24px;
+    transition: opacity 0.3s;
+  }
+
+  .barra-progreso-container {
+    background: #e0d8c0;
+    border-radius: 4px;
+    height: 12px;
+    overflow: hidden;
+    border: 1px solid var(--gris);
+    margin-bottom: 8px;
+  }
+
+  .barra-progreso {
+    height: 100%;
+    background: linear-gradient(90deg, var(--azul), var(--dorado), var(--azul-claro));
+    background-size: 200% 100%;
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.5s ease;
+    animation: shimmer 1.5s linear infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 200% 0%; }
+  }
+
+  .porcentaje {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    color: var(--azul);
+    font-weight: 700;
+  }
+
+  /* ===================== RESULTADO NICOLAS ===================== */
+  .resultado-nicolas {
+    display: none;
+  }
+
+  .resultado-nicolas.activo {
+    display: block;
+  }
+
+  .resultado-header {
+    background: linear-gradient(135deg, var(--azul) 0%, var(--azul-medio) 100%);
+    margin: -36px -40px 20px;
+    padding: 20px;
+    border-radius: 3px 3px 0 0;
+    border-bottom: 3px solid var(--dorado);
+  }
+
+  .resultado-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(14px, 4vw, 20px);
+    font-weight: 900;
+    color: var(--dorado-brillante);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    text-shadow: 0 0 20px rgba(201,168,76,0.5);
+  }
+
+  .medalla {
+    font-size: 70px;
+    display: block;
+    text-align: center;
+    margin: 10px 0;
+    animation: medalla-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: drop-shadow(0 4px 12px rgba(201,168,76,0.6));
+  }
+
+  @keyframes medalla-bounce {
+    0% { transform: scale(0) rotate(-30deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+
+  .registrado-texto {
+    font-family: 'Crimson Text', serif;
+    font-size: 15px;
+    color: #5a4a2a;
+    text-align: center;
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+
+  .elegido-nombre {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--azul);
+    text-align: center;
+    margin: 10px 0;
+    letter-spacing: 3px;
+  }
+
+  .plan-gobierno {
+    background: linear-gradient(135deg, #f0e8d0, #e8dfc4);
+    border: 1px solid var(--dorado);
+    border-radius: 4px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    text-align: left;
+  }
+
+  .plan-gobierno h4 {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 13px;
+    color: var(--azul);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .plan-item {
+    font-family: 'Crimson Text', serif;
+    font-size: 15px;
+    color: #2a4a2a;
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .plan-item::before {
+    content: '✔';
+    color: var(--verde-check);
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .btn-notificar {
+    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-radius: 50px;
+    width: 100%;
+    transition: all 0.3s;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .btn-notificar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(37,211,102,0.5);
+  }
+
+  .btn-cerrar {
+    background: transparent;
+    color: var(--azul);
+    border: 1px solid var(--gris);
+    padding: 8px 20px;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-top: 10px;
+    width: 100%;
+    transition: all 0.2s;
+  }
+
+  .btn-cerrar:hover {
+    background: var(--crema);
+  }
+
+  /* ===================== RESULTADO OTRO ===================== */
+  .resultado-otro {
+    display: none;
+  }
+  .resultado-otro.activo {
+    display: block;
+  }
+
+  .advertencia-icon {
+    font-size: 60px;
+    display: block;
+    text-align: center;
+    margin: 0 0 12px;
+    animation: shake 0.5s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-10deg) scale(1.1); }
+    75% { transform: rotate(10deg) scale(1.1); }
+  }
+
+  .advertencia-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--rojo);
+    text-align: center;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+
+  .advertencia-texto {
+    font-family: 'Crimson Text', serif;
+    font-size: 16px;
+    color: #5a4a2a;
+    text-align: center;
+    line-height: 1.6;
+    background: #fff8e8;
+    border: 1px solid var(--dorado);
+    border-radius: 4px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+
+  .emoji-personaje {
+    font-size: 80px;
+    display: block;
+    text-align: center;
+    margin: 10px 0;
+    animation: bounce-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes bounce-in {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+  }
+
+  /* ===================== CONFETI ===================== */
+  .confeti-container {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+  }
+
+  .confeti-piece {
+    position: absolute;
+    width: 10px;
+    height: 14px;
+    top: -20px;
+    animation: caer linear forwards;
+  }
+
+  @keyframes caer {
+    0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg) scale(0.5); opacity: 0; }
+  }
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (max-width: 480px) {
+    .wrapper { padding: 10px; }
+    .cabecera { padding: 10px 12px; gap: 8px; }
+    .cabecera-derecha { display: none; }
+    .foto-candidato, .avatar-svg { width: 70px; height: 85px; }
+    .modal-card { padding: 24px 20px; }
+    .resultado-header { margin: -24px -20px 16px; }
+    .btn-votar { padding: 12px 24px; }
+  }
 </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
-<div id="cursor">🐄</div>
-<div id="cursor-trail"></div>
-<div id="pgbar"></div>
-<div id="pgcow">🐄</div>
-<div id="phase-label">— para ti —</div>
-<div id="nav-dots"></div>
-<div class="toast" id="toast"></div>
+<div class="confeti-container" id="confeti"></div>
 
-<!-- ══════ S0: SPLASH ══════ -->
-<section class="screen active" id="s0">
-  <div class="splash-field e">
-    <div class="field-sky">
-      <div class="cloud" style="top:20%;animation-duration:18s;animation-delay:0s">☁️</div>
-      <div class="cloud" style="top:40%;animation-duration:24s;animation-delay:-8s;font-size:1rem">☁️</div>
+<div class="wrapper">
+  <!-- TARJETON PRINCIPAL -->
+  <div class="tarjeton">
+
+    <!-- CABECERA -->
+    <div class="cabecera">
+      <div class="logo-registraduria">
+        <div class="escudo">❤️</div>
+        <span>REGISTRADURÍA<br>NACIONAL DEL<br>CORAZÓN</span>
+      </div>
+
+      <div class="titulo-principal">
+        <p class="pre-titulo">Voto por la fórmula para</p>
+        <h1>Elecciones Presidenciales<br>del Corazón</h1>
+        <span class="anio">2026</span>
+      </div>
+
+      <div class="cabecera-derecha">
+        <span class="codigo-barra">ECPC0001</span>
+        <div class="codigo-barra-img"></div>
+        <span class="pag">PAG. 1</span>
+      </div>
     </div>
-    <div class="field-grass"></div>
-    <div class="splash-cow" id="splash-cow" onclick="mooClick()">🐄</div>
-    <div class="moo-bubble" id="moo">¡Muuuu! 🌻</div>
-  </div>
-  <h1 class="splash-title e">Hay algo que quiero<br>que veas.</h1>
-  <p class="splash-hint e">Toca la vaca 3 veces para comenzar 🐄</p>
-  <div id="moo-counter" style="font-size:0.7rem;color:var(--tx3);margin-bottom:1rem;min-height:1rem;"></div>
-</section>
 
-<!-- ══════ S1: PLANT FEELINGS ══════ -->
-<section class="screen" id="s1">
-  <p class="stars-instruction e">Toca el campo para <span>sembrar</span> lo que generé en ti<br><small style="font-size:0.85em;opacity:0.7">necesitas plantar 5</small></p>
-  <div class="star-field e" id="star-field" onclick="plantItem(event)"></div>
-  <p class="plant-counter e" id="plant-count">0 / 5 plantados</p>
-  <div id="s1-unlock">
-    <p style="font-family:'Fraunces',serif;font-style:italic;font-size:0.9rem;color:var(--br2);margin-bottom:1rem;max-width:300px;">
-      Lo sembre yo. Sin querer.<br>Y tarde en verlo.
-    </p>
-    <button class="btn e" onclick="goTo(2)">Seguir →</button>
-  </div>
-</section>
-
-<!-- ══════ S2: DRAG TRUTHS ══════ -->
-<section class="screen" id="s2">
-  <p class="drag-label e">Arrastra lo que hice</p>
-  <div class="drag-arena e" id="drag-arena"></div>
-  <div class="drop-zone e" id="drop-zone">
-    <p class="drop-zone-label">Lo que asumo →</p>
-  </div>
-  <div id="s2-unlock">
-    <p style="font-family:'Fraunces',serif;font-style:italic;font-size:0.85rem;color:var(--br2);margin-bottom:1rem;max-width:300px;line-height:1.6;">
-      No solo lo reconozco.<br>Lo entiendo de verdad.
-    </p>
-    <button class="btn e" onclick="goTo(3)">Continuar →</button>
-  </div>
-</section>
-
-<!-- ══════ S3: TERMINAL ══════ -->
-<section class="screen" id="s3">
-  <div class="terminal-wrap e">
-    <div class="term-bar">
-      <div class="tdot tdot-r"></div>
-      <div class="tdot tdot-y"></div>
-      <div class="tdot tdot-g"></div>
-      <span class="term-title">diagnostico_honesto.exe</span>
+    <!-- BANDA INFO -->
+    <div class="banda-info">
+      <span>Elecciones — Mayo 2026</span>
+      <span class="periodo">Período 2026 – 2030</span>
     </div>
-    <div class="term-body" id="tbody">
-      <div class="tl cmd show">$ iniciando analisis...<span class="tcur show" id="tcur1"></span></div>
-      <div class="tl" id="tl0"></div>
-      <div class="tl ok" id="tl1"></div>
-      <div class="tl ok" id="tl2"></div>
-      <div class="tl ok" id="tl3"></div>
-      <div class="tl ok" id="tl4"></div>
-      <div class="tl warn" id="tl5"></div>
-      <div class="tl" id="tl6"></div>
-      <div class="tl res" id="tl7"></div>
-      <span class="tcur" id="tcur2"></span>
+
+    <!-- BANNER INSTRUCCION -->
+    <div class="banner-instruccion">
+      <p>Marque una sola opción en esta tarjeta</p>
     </div>
-  </div>
-  <div id="s3-unlock" style="opacity:0;transition:opacity 0.5s;pointer-events:none;">
-    <button class="btn" onclick="goTo(4)">Siguiente →</button>
-  </div>
-</section>
 
-<!-- ══════ S4: MEMORY MATCH ══════ -->
-<section class="screen" id="s4">
-  <p class="memory-intro e">Encuentra los pares.<br><small style="font-size:0.8em;color:var(--tx3);">Cada par = algo que quiero que sepas 🐄</small></p>
-  <p class="mem-score e">Pares: <span id="pair-count">0</span> / 4</p>
-  <div class="mem-grid e" id="mem-grid"></div>
-  <div id="s4-unlock">
-    <p style="font-family:'Fraunces',serif;font-style:italic;font-size:0.85rem;color:var(--br2);margin-bottom:1rem;max-width:300px;line-height:1.6;" id="mem-msg"></p>
-    <button class="btn" onclick="goTo(5)">Lo mas importante →</button>
-  </div>
-</section>
+    <!-- SUBTITULO -->
+    <div class="subtitulo-seccion">
+      <p>Seleccione un candidato para emitir su voto</p>
+    </div>
 
-<!-- ══════ S5: EMOTIONAL ══════ -->
-<section class="screen" id="s5">
-  <div class="emo-particles e" id="emo-particles"></div>
-  <p class="emo-main e">
-    No queria que pensaras<br>
-    que no pienso en ti.<br>
-    Porque realmente eres<br>
-    <em>una de las personas mas<br>importantes de mi vida.</em>
-  </p>
-  <div class="soft-lines" id="soft-lines">
-    <p class="sline">la distancia vuelve mas sensibles los silencios</p>
-    <p class="sline">las pequeñas acciones pesan más</p>
-    <p class="sline">y lo entendí tarde</p>
-  </div>
-  <button class="btn e" onclick="goTo(6)">Al final →</button>
-</section>
+    <!-- GRID CANDIDATOS -->
+    <div class="grid-candidatos">
 
-<!-- ══════ S6: FINALE ══════ -->
-<section class="screen" id="s6">
-  <span class="finale-cow">🐄</span>
-  <p class="finale-title e">
-    No hice esto para prometerte perfeccion.<br>
-    Solo queria mostrarte<br>que me detuve a pensar<br>de verdad.
-  </p>
-  <p class="finale-note e">con calma, y con todo 🤍</p>
-  <button class="confetti-btn e" onclick="launchConfetti(); setTimeout(()=> window.open('https://wa.me/573134029218?text=Hola%20%F0%9F%90%84%20vi%20tu%20mensaje%20y%20quiero%20hablar%20contigo', '_blank'), 1500)">
-  🐄 Si quieres hablar, toca aquí 🌻
-</button>
-</section>
+      <!-- NICOLAS -->
+      <div class="candidato" id="c1" onclick="seleccionar(1)">
+        <div class="candidato-header">
+          <span>PRESIDENTE</span>
+          <span>FORMULA 1</span>
+        </div>
+        <div class="foto-container">
+          <!-- Avatar de Nicolas - hombre elegante -->
+          <svg class="avatar-svg" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="90" height="110" fill="#d4c8a8"/>
+            <!-- Traje -->
+            <rect x="15" y="68" width="60" height="45" rx="4" fill="#1a3a6e"/>
+            <!-- Corbata -->
+            <polygon points="45,68 41,78 45,90 49,78" fill="#c9a84c"/>
+            <!-- Camisa -->
+            <rect x="30" y="68" width="30" height="12" fill="#f8f5ee"/>
+            <!-- Cuello camisa -->
+            <path d="M38 68 L45 74 L52 68" fill="none" stroke="#f8f5ee" stroke-width="1.5"/>
+            <!-- Cabeza -->
+            <ellipse cx="45" cy="38" rx="24" ry="27" fill="#c4956a"/>
+            <!-- Cabello oscuro -->
+            <path d="M21 32 Q22 12 45 10 Q68 12 69 32 Q65 18 45 17 Q25 18 21 32Z" fill="#2a1a0a"/>
+            <!-- Barba -->
+            <ellipse cx="45" cy="54" rx="20" ry="10" fill="#3d2810" opacity="0.6"/>
+            <!-- Ojos -->
+            <ellipse cx="37" cy="38" rx="3.5" ry="3" fill="#2a1a0a"/>
+            <ellipse cx="53" cy="38" rx="3.5" ry="3" fill="#2a1a0a"/>
+            <ellipse cx="38" cy="37" rx="1" ry="1" fill="white"/>
+            <ellipse cx="54" cy="37" rx="1" ry="1" fill="white"/>
+            <!-- Nariz -->
+            <ellipse cx="45" cy="46" rx="3" ry="2" fill="#b0845a"/>
+            <!-- Boca sonrisa -->
+            <path d="M39 52 Q45 57 51 52" fill="none" stroke="#7a3a1a" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- Cejas -->
+            <path d="M33 32 Q37 30 41 32" fill="none" stroke="#2a1a0a" stroke-width="2" stroke-linecap="round"/>
+            <path d="M49 32 Q53 30 57 32" fill="none" stroke="#2a1a0a" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div class="numero-candidato">1</div>
+        </div>
+        <div class="candidato-info">
+          <div class="candidato-nombre">NICOLÁS</div>
+          <div class="partido-logo-row">
+            <span class="partido-icon">🌻</span>
+            <span class="partido-nombre">Movimiento de la Transparencia</span>
+          </div>
+          <div class="slogan">"Menos promesas, más resultados"</div>
+        </div>
+        <div class="check-seleccion">✓</div>
+      </div>
+
+      <!-- VEGETA -->
+      <div class="candidato" id="c2" onclick="seleccionar(2)">
+        <div class="candidato-header">
+          <span>PRESIDENTE</span>
+          <span>FORMULA 2</span>
+        </div>
+        <div class="foto-container">
+          <svg class="avatar-svg" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="90" height="110" fill="#d4c8a8"/>
+            <!-- Armadura Saiyan azul -->
+            <rect x="14" y="65" width="62" height="50" rx="3" fill="#2255aa"/>
+            <!-- Hombros armadura -->
+            <rect x="10" y="60" width="20" height="18" rx="4" fill="#3366cc"/>
+            <rect x="60" y="60" width="20" height="18" rx="4" fill="#3366cc"/>
+            <!-- Peto armadura -->
+            <rect x="25" y="65" width="40" height="25" rx="3" fill="#f8f5ee"/>
+            <!-- Cabeza -->
+            <ellipse cx="45" cy="36" rx="22" ry="25" fill="#e8c89a"/>
+            <!-- Cabello fuego saiyan -->
+            <path d="M23 30 Q22 8 35 5 Q42 2 45 3 Q48 2 55 5 Q68 8 67 30 Q63 12 45 11 Q27 12 23 30Z" fill="#1a1a1a"/>
+            <path d="M23 24 Q20 10 30 6 L28 22Z" fill="#1a1a1a"/>
+            <path d="M67 24 Q70 10 60 6 L62 22Z" fill="#1a1a1a"/>
+            <!-- Cejas duras -->
+            <path d="M27 29 Q33 25 39 28" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/>
+            <path d="M51 28 Q57 25 63 29" fill="none" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/>
+            <!-- Ojos intensos -->
+            <ellipse cx="35" cy="36" rx="4" ry="3.5" fill="#1a1a1a"/>
+            <ellipse cx="55" cy="36" rx="4" ry="3.5" fill="#1a1a1a"/>
+            <ellipse cx="36" cy="35" rx="1" ry="1" fill="white"/>
+            <ellipse cx="56" cy="35" rx="1" ry="1" fill="white"/>
+            <!-- Nariz -->
+            <ellipse cx="45" cy="44" rx="3" ry="2" fill="#d4a875"/>
+            <!-- Boca seria -->
+            <path d="M38 51 Q45 49 52 51" fill="none" stroke="#7a3a1a" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <div class="numero-candidato">2</div>
+        </div>
+        <div class="candidato-info">
+          <div class="candidato-nombre">VEGETA</div>
+          <div class="partido-logo-row">
+            <span class="partido-icon">⚡</span>
+            <span class="partido-nombre">Partido Saiyajin Nacional</span>
+          </div>
+          <div class="slogan">"Más entrenamiento, menos excusas"</div>
+        </div>
+        <div class="check-seleccion">✓</div>
+      </div>
+
+      <!-- PICCOLO -->
+      <div class="candidato" id="c3" onclick="seleccionar(3)">
+        <div class="candidato-header">
+          <span>PRESIDENTE</span>
+          <span>FORMULA 3</span>
+        </div>
+        <div class="foto-container">
+          <svg class="avatar-svg" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="90" height="110" fill="#d4c8a8"/>
+            <!-- Capa namek -->
+            <rect x="10" y="60" width="70" height="55" rx="3" fill="#f8f5ee"/>
+            <path d="M10 60 Q45 75 80 60 L80 85 Q45 100 10 85Z" fill="#e0d8c0"/>
+            <!-- Ropa -->
+            <rect x="22" y="65" width="46" height="30" fill="#4a2a8a"/>
+            <!-- Cabeza verde -->
+            <ellipse cx="45" cy="37" rx="23" ry="26" fill="#3a8a3a"/>
+            <!-- Antenas -->
+            <ellipse cx="34" cy="14" rx="4" ry="7" fill="#2a6a2a" transform="rotate(-15 34 14)"/>
+            <ellipse cx="56" cy="14" rx="4" ry="7" fill="#2a6a2a" transform="rotate(15 56 14)"/>
+            <!-- Cejas prominentes namek -->
+            <path d="M25 32 Q32 28 40 31" fill="none" stroke="#1a4a1a" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M50 31 Q58 28 65 32" fill="none" stroke="#1a4a1a" stroke-width="3.5" stroke-linecap="round"/>
+            <!-- Ojos -->
+            <ellipse cx="35" cy="39" rx="4" ry="4" fill="#1a1a4a"/>
+            <ellipse cx="55" cy="39" rx="4" ry="4" fill="#1a1a4a"/>
+            <ellipse cx="36" cy="38" rx="1.5" ry="1.5" fill="white"/>
+            <ellipse cx="56" cy="38" rx="1.5" ry="1.5" fill="white"/>
+            <!-- Nariz namek (sin nariz) -->
+            <!-- Boca seria -->
+            <path d="M36 51 L54 51" fill="none" stroke="#1a4a1a" stroke-width="2" stroke-linecap="round"/>
+            <!-- Manchas -->
+            <ellipse cx="30" cy="37" rx="4" ry="3" fill="#2a7a2a" opacity="0.4"/>
+            <ellipse cx="60" cy="37" rx="4" ry="3" fill="#2a7a2a" opacity="0.4"/>
+          </svg>
+          <div class="numero-candidato">3</div>
+        </div>
+        <div class="candidato-info">
+          <div class="candidato-nombre">PICCOLO</div>
+          <div class="partido-logo-row">
+            <span class="partido-icon">🌍</span>
+            <span class="partido-nombre">Movimiento Namekusei Unido</span>
+          </div>
+          <div class="slogan">"Disciplina para todos"</div>
+        </div>
+        <div class="check-seleccion">✓</div>
+      </div>
+
+      <!-- MAJIN BUU -->
+      <div class="candidato" id="c4" onclick="seleccionar(4)">
+        <div class="candidato-header">
+          <span>PRESIDENTE</span>
+          <span>FORMULA 4</span>
+        </div>
+        <div class="foto-container">
+          <svg class="avatar-svg" viewBox="0 0 90 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="90" height="110" fill="#d4c8a8"/>
+            <!-- Pantalones -->
+            <rect x="16" y="70" width="58" height="45" rx="3" fill="#f0a020"/>
+            <!-- Faja -->
+            <rect x="16" y="68" width="58" height="10" fill="#e87a00"/>
+            <!-- Cuerpo gordo -->
+            <ellipse cx="45" cy="75" rx="30" ry="20" fill="#d966cc"/>
+            <!-- Cabeza rosa redonda -->
+            <ellipse cx="45" cy="38" rx="26" ry="28" fill="#d966cc"/>
+            <!-- Antena -->
+            <path d="M45 10 Q55 2 58 -5" fill="none" stroke="#d966cc" stroke-width="6" stroke-linecap="round"/>
+            <ellipse cx="59" cy="-4" rx="5" ry="5" fill="#d966cc"/>
+            <!-- Orejas -->
+            <ellipse cx="19" cy="40" rx="6" ry="8" fill="#d966cc"/>
+            <ellipse cx="71" cy="40" rx="6" ry="8" fill="#d966cc"/>
+            <!-- Ojos pequeños y brillantes -->
+            <ellipse cx="37" cy="36" rx="5" ry="5" fill="white"/>
+            <ellipse cx="53" cy="36" rx="5" ry="5" fill="white"/>
+            <ellipse cx="37" cy="37" rx="3" ry="3" fill="#1a1a3a"/>
+            <ellipse cx="53" cy="37" rx="3" ry="3" fill="#1a1a3a"/>
+            <ellipse cx="38" cy="36" rx="1" ry="1" fill="white"/>
+            <ellipse cx="54" cy="36" rx="1" ry="1" fill="white"/>
+            <!-- Nariz chata -->
+            <ellipse cx="45" cy="46" rx="5" ry="3" fill="#c255b5" opacity="0.6"/>
+            <!-- Sonrisa grande -->
+            <path d="M33 53 Q45 63 57 53" fill="#aa2299" stroke="#7a1166" stroke-width="1"/>
+            <!-- Dientes -->
+            <path d="M37 55 Q45 62 53 55" fill="white"/>
+            <!-- Mejillas rosadas -->
+            <ellipse cx="27" cy="47" rx="7" ry="5" fill="#e088d5" opacity="0.5"/>
+            <ellipse cx="63" cy="47" rx="7" ry="5" fill="#e088d5" opacity="0.5"/>
+          </svg>
+          <div class="numero-candidato">4</div>
+        </div>
+        <div class="candidato-info">
+          <div class="candidato-nombre">MAJIN BUU</div>
+          <div class="partido-logo-row">
+            <span class="partido-icon">🍰</span>
+            <span class="partido-nombre">Partido Dulce y Prosperidad</span>
+          </div>
+          <div class="slogan">"Más postres para la nación"</div>
+        </div>
+        <div class="check-seleccion">✓</div>
+      </div>
+
+    </div><!-- fin grid -->
+
+    <!-- SECCION BOTON -->
+    <div class="seccion-boton">
+      <div class="urna-container">
+        <span class="urna">🗳️</span>
+      </div>
+      <button class="btn-votar" id="btnVotar" onclick="procesarVoto()" disabled>
+        ⊛ &nbsp; DEPOSITAR VOTO &nbsp; ⊛
+      </button>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <span>Comisión Nacional del Corazón</span>
+      <span>Versión Oficial 2026</span>
+    </div>
+
+  </div><!-- fin tarjeton -->
+</div>
+
+<!-- ===================== MODAL PROCESANDO ===================== -->
+<div class="modal-overlay" id="modalProcesando">
+  <div class="modal-card">
+    <div id="pantallaProcesando">
+      <div class="procesando-icon" id="iconoProcesando">⚙️</div>
+      <div class="procesando-titulo">Procesando Voto</div>
+      <div class="paso-procesando" id="pasoProcesando">Iniciando sistema...</div>
+      <div class="barra-progreso-container">
+        <div class="barra-progreso" id="barraProgreso"></div>
+      </div>
+      <div class="porcentaje" id="porcentaje">0%</div>
+    </div>
+
+    <!-- RESULTADO NICOLAS -->
+    <div class="resultado-nicolas" id="resultadoNicolas">
+      <div class="resultado-header">
+        <h2>⚖️ Resultado Electoral Oficial ⚖️</h2>
+      </div>
+      <span class="medalla">🏅</span>
+      <p class="registrado-texto">
+        Su voto ha sido registrado exitosamente.<br>
+        La Comisión Nacional del Corazón agradece su participación.
+      </p>
+      <p class="registrado-texto">Usted ha elegido al candidato:</p>
+      <div class="elegido-nombre">NICOLÁS</div>
+      <div class="plan-gobierno">
+        <h4>Plan de Gobierno 2026 – 2030</h4>
+        <div class="plan-item">Transparencia</div>
+        <div class="plan-item">Escucha Activa</div>
+        <div class="plan-item">Tranquilidad</div>
+        <div class="plan-item">Construcción de Sueños</div>
+        <div class="plan-item">Futuro Compartido</div>
+      </div>
+      <button class="btn-notificar" onclick="notificarCandidato()">
+        <span>📲</span> NOTIFICAR AL CANDIDATO
+      </button>
+      <button class="btn-cerrar" onclick="cerrarModal()">Cerrar</button>
+    </div>
+
+    <!-- RESULTADO OTRO CANDIDATO -->
+    <div class="resultado-otro" id="resultadoOtro">
+      <span class="advertencia-icon" id="iconoAdv">⚠️</span>
+      <div class="advertencia-titulo" id="tituloAdv"></div>
+      <div class="advertencia-texto" id="textoAdv"></div>
+      <span class="emoji-personaje" id="emojiPersonaje"></span>
+      <button class="btn-cerrar" onclick="cerrarModal()">Volver a votar</button>
+    </div>
+
+  </div>
+</div>
 
 <script>
-// ══════════════════════════════════════════════
-//  CORE
-// ══════════════════════════════════════════════
-const TOTAL = 7;
-let cur = 0;
-const screens = [...document.querySelectorAll('.screen')];
+  let candidatoSeleccionado = null;
 
-// NAV DOTS
-const ndWrap = document.getElementById('nav-dots');
-for(let i=0;i<TOTAL;i++){
-  const d = document.createElement('div');
-  d.className='ndot'+(i===0?' on':'');
-  d.onclick=()=>goTo(i);
-  ndWrap.appendChild(d);
-}
+  const datosCandidatos = {
+    2: {
+      titulo: '⚠️ ADVERTENCIA SAIYAJIN',
+      texto: 'Ha seleccionado entrenamiento físico obligatorio todos los días a las 4:00 AM. Incluye gravedad x100. No se aceptan quejas, excusas ni días de descanso. El que no entrena, no come.',
+      emoji: '💪'
+    },
+    3: {
+      titulo: '⚠️ ADVERTENCIA NAMEKIANA',
+      texto: 'Ha seleccionado disciplina extrema, meditación obligatoria diaria y reuniones estratégicas semanales de 6 horas. Piccolo no acepta impuntualidad. El silencio es obligatorio en las sesiones.',
+      emoji: '🧘'
+    },
+    4: {
+      titulo: '⚠️ ADVERTENCIA DULCE',
+      texto: '¡Felicitaciones! Ha elegido consumo obligatorio de pasteles, chocolates y dulces tres veces al día. El presupuesto nacional se destinará al 100% a pastelerías. Dietas prohibidas por decreto.',
+      emoji: '🍰'
+    }
+  };
 
-function goTo(idx){
-  if(idx===cur)return;
-  const prev=screens[cur];
-  prev.style.opacity='0';
-  prev.style.transform='translateY(-16px)';
-  prev.style.pointerEvents='none';
-  setTimeout(()=>{
-    prev.classList.remove('active');
-    prev.style.opacity='';prev.style.transform='';
-    cur=idx;
-    const next=screens[cur];
-    next.classList.add('active');
-    setTimeout(()=>animE(next),50);
-    if(idx===2)initDrag();
-    if(idx===3)runTerminal();
-    if(idx===4)initMemory();
-    if(idx===5)animSoftLines();
-    updateNav();
-    showToasts[idx]&&showToast(showToasts[idx]);
-  },350);
-}
-
-const showToasts={
-  1:'🌱 Siembra tus sentimientos',
-  2:'↔️ Arrastra lo que reconozco',
-  3:'💻 Sistema de honestidad iniciado',
-  4:'🧠 Encuentra los pares',
-  5:'💛 Lo más importante',
-  6:'🐄 ¡Llegaste al final!'
-};
-
-function updateNav(){
-  document.querySelectorAll('.ndot').forEach((d,i)=>d.classList.toggle('on',i===cur));
-  const pct=cur/(TOTAL-1)*100;
-  document.getElementById('pgbar').style.width=pct+'%';
-  document.getElementById('pgcow').style.left=pct+'%';
-}
-
-function animE(screen){
-  screen.querySelectorAll('.e').forEach((el,i)=>{
-    el.style.transitionDelay=(i*0.1)+'s';
-    el.classList.add('v');
-  });
-}
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2800);
-}
-
-// ══════════════════════════════════════════════
-//  CUSTOM CURSOR
-// ══════════════════════════════════════════════
-const cur_el=document.getElementById('cursor');
-const trail=document.getElementById('cursor-trail');
-document.addEventListener('mousemove',e=>{
-  cur_el.style.left=e.clientX+'px';cur_el.style.top=e.clientY+'px';
-  setTimeout(()=>{trail.style.left=e.clientX+'px';trail.style.top=e.clientY+'px';},80);
-});
-
-// ══════════════════════════════════════════════
-//  BG CANVAS — floating particles
-// ══════════════════════════════════════════════
-const canvas=document.getElementById('bg-canvas');
-const ctx=canvas.getContext('2d');
-let W,H,particles=[];
-function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;initParticles();}
-function initParticles(){
-  particles=[];
-  for(let i=0;i<18;i++){
-    particles.push({
-      x:Math.random()*W,y:Math.random()*H,
-      r:Math.random()*60+30,
-      vx:(Math.random()-0.5)*0.3,
-      vy:(Math.random()-0.5)*0.2,
-      o:Math.random()*0.04+0.015,
-      phase:Math.random()*Math.PI*2
-    });
+  function seleccionar(n) {
+    candidatoSeleccionado = n;
+    document.querySelectorAll('.candidato').forEach(c => c.classList.remove('seleccionado'));
+    document.getElementById('c' + n).classList.add('seleccionado');
+    document.getElementById('btnVotar').disabled = false;
   }
-}
-function drawParticles(t){
-  ctx.clearRect(0,0,W,H);
-  particles.forEach(p=>{
-    p.x+=p.vx;p.y+=p.vy;
-    if(p.x<-100)p.x=W+100;if(p.x>W+100)p.x=-100;
-    if(p.y<-100)p.y=H+100;if(p.y>H+100)p.y=-100;
-    const pulse=Math.sin(t*0.001+p.phase)*0.01+p.o;
-    ctx.beginPath();
-    ctx.ellipse(p.x,p.y,p.r*1.4,p.r,Math.sin(t*0.0005)*0.5,0,Math.PI*2);
-    ctx.fillStyle=`rgba(44,26,14,${pulse})`;
-    ctx.fill();
-  });
-  requestAnimationFrame(drawParticles);
-}
-window.addEventListener('resize',resize);
-resize();
-requestAnimationFrame(drawParticles);
 
-// ══════════════════════════════════════════════
-//  SCREEN 0 — MOO GATE
-// ══════════════════════════════════════════════
-animE(screens[0]);
-let mooCount=0;
-const mooMsgs=['🐄 Muuuu...','🐄🐄 ¡Otra vez!','🐄🐄🐄 ¡Perfecto! Comenzando...'];
-function mooClick(){
-  mooCount++;
-  const moo=document.getElementById('moo');
-  const variants=['¡Muuuu! 🌻','¡Muu muu! 💛','¡MUUUUU! 🐄✨'];
-  moo.textContent=variants[Math.min(mooCount-1,2)];
-  moo.classList.add('show');
-  setTimeout(()=>moo.classList.remove('show'),1200);
-  document.getElementById('moo-counter').textContent=mooMsgs[mooCount-1]||'';
-  if(mooCount>=3) setTimeout(()=>goTo(1),800);
-}
-
-// ══════════════════════════════════════════════
-//  SCREEN 1 — PLANT FEELINGS
-// ══════════════════════════════════════════════
-const plantEmojis=['😔','🥺','😡','🦥'];
-let plantCount=0;
-function plantItem(e){
-  if(plantCount>=8)return;
-  const field=document.getElementById('star-field');
-  const rect=field.getBoundingClientRect();
-  const x=e.clientX-rect.left,y=e.clientY-rect.top;
-  field.classList.add('planted');
-  const el=document.createElement('div');
-  el.className='planted-item';
-  el.style.left=x+'px';el.style.top=y+'px';
-  el.textContent=plantEmojis[Math.floor(Math.random()*plantEmojis.length)];
-  el.style.animationDelay='0s';
-  field.appendChild(el);
-  plantCount++;
-  document.getElementById('plant-count').textContent=plantCount+' / 5 plantados';
-  if(plantCount>=5){
-    document.getElementById('s1-unlock').classList.add('show');
-    // replace emojis with flowers after
-    setTimeout(()=>{
-      field.querySelectorAll('.planted-item').forEach(el=>{
-        el.style.transition='all 0.5s';
-        el.textContent='🌻';
-      });
-    },600);
-  }
-}
-
-// ══════════════════════════════════════════════
-//  SCREEN 2 — DRAG TRUTHS
-// ══════════════════════════════════════════════
-const truths=[
-  'Oculté cosas pequeñas',
-  'No comunique las cosas',
-  '"No pense en ti"',
-  'Genere decepcion'
-];
-let draggedEl=null,droppedCount=0;
-
-function initDrag(){
-  if(document.getElementById('drag-arena').children.length>0)return;
-  const arena=document.getElementById('drag-arena');
-  const positions=[
-    {top:'5%',left:'2%'},{top:'5%',left:'52%'},
-    {top:'50%',left:'2%'},{top:'50%',left:'52%'}
+  const pasos = [
+    { texto: 'Procesando voto...', icono: '⚙️', p: 15 },
+    { texto: 'Verificando identidad...', icono: '🔍', p: 35 },
+    { texto: 'Consultando Registraduría del Corazón...', icono: '🏛️', p: 60 },
+    { texto: 'Depositando voto...', icono: '🗳️', p: 85 },
+    { texto: 'Validando resultado...', icono: '✅', p: 100 }
   ];
-  truths.forEach((t,i)=>{
-    const card=document.createElement('div');
-    card.className='truth-card';
-    card.textContent=t;
-    card.style.top=positions[i].top;
-    card.style.left=positions[i].left;
-    card.dataset.idx=i;
-    setupDrag(card);
-    arena.appendChild(card);
-  });
-  const dz=document.getElementById('drop-zone');
-  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
-  dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
-  dz.addEventListener('drop',e=>{
-    e.preventDefault();dz.classList.remove('over');
-    if(draggedEl&&!draggedEl.classList.contains('placed')){
-      draggedEl.classList.add('placed');
-      draggedEl.style.position='relative';
-      draggedEl.style.top='auto';draggedEl.style.left='auto';
-      draggedEl.style.width='auto';
-      draggedEl.draggable=false;
-      dz.appendChild(draggedEl);
-      droppedCount++;
-      if(droppedCount>=4){
-        document.getElementById('s2-unlock').classList.add('show');
+
+  function procesarVoto() {
+    if (!candidatoSeleccionado) return;
+
+    const modal = document.getElementById('modalProcesando');
+    const pantalla = document.getElementById('pantallaProcesando');
+    const rN = document.getElementById('resultadoNicolas');
+    const rO = document.getElementById('resultadoOtro');
+
+    pantalla.style.display = 'block';
+    rN.classList.remove('activo');
+    rO.classList.remove('activo');
+
+    document.getElementById('barraProgreso').style.width = '0%';
+    document.getElementById('porcentaje').textContent = '0%';
+
+    modal.classList.add('activo');
+
+    let paso = 0;
+    const intervalo = setInterval(() => {
+      if (paso < pasos.length) {
+        const p = pasos[paso];
+        document.getElementById('pasoProcesando').textContent = p.texto;
+        document.getElementById('iconoProcesando').textContent = p.icono;
+        document.getElementById('barraProgreso').style.width = p.p + '%';
+        document.getElementById('porcentaje').textContent = p.p + '%';
+        paso++;
+      } else {
+        clearInterval(intervalo);
+        setTimeout(() => mostrarResultado(), 400);
       }
-    }
-    draggedEl=null;
-  });
-  // touch drag
-  setupTouchDrag(dz);
-}
+    }, 700);
+  }
 
-function setupDrag(card){
-  card.draggable=true;
-  card.addEventListener('dragstart',()=>{draggedEl=card;});
-  // touch
-  let startX,startY,ox,oy;
-  card.addEventListener('touchstart',e=>{
-    if(card.classList.contains('placed'))return;
-    const t=e.touches[0];
-    startX=t.clientX;startY=t.clientY;
-    const r=card.getBoundingClientRect();
-    ox=t.clientX-r.left;oy=t.clientY-r.top;
-    draggedEl=card;
-    card.style.position='fixed';card.style.zIndex=500;
-    card.style.width='140px';card.style.pointerEvents='none';
-    e.preventDefault();
-  },{passive:false});
-  card.addEventListener('touchmove',e=>{
-    if(!draggedEl)return;
-    const t=e.touches[0];
-    card.style.left=(t.clientX-ox)+'px';
-    card.style.top=(t.clientY-oy)+'px';
-    e.preventDefault();
-  },{passive:false});
-  card.addEventListener('touchend',e=>{
-    if(!draggedEl)return;
-    const t=e.changedTouches[0];
-    const dz=document.getElementById('drop-zone');
-    const dzr=dz.getBoundingClientRect();
-    card.style.position='';card.style.zIndex='';
-    card.style.width='';card.style.pointerEvents='';
-    if(t.clientX>=dzr.left&&t.clientX<=dzr.right&&t.clientY>=dzr.top&&t.clientY<=dzr.bottom){
-      if(!card.classList.contains('placed')){
-        card.classList.add('placed');
-        card.style.position='relative';card.style.top='auto';card.style.left='auto';card.style.width='auto';
-        card.draggable=false;
-        dz.appendChild(card);
-        droppedCount++;
-        if(droppedCount>=4) document.getElementById('s2-unlock').classList.add('show');
-      }
+  function mostrarResultado() {
+    document.getElementById('pantallaProcesando').style.display = 'none';
+
+    if (candidatoSeleccionado === 1) {
+      document.getElementById('resultadoNicolas').classList.add('activo');
+      lanzarConfeti();
     } else {
-      card.style.top=card.dataset.ot||'5%';card.style.left=card.dataset.ol||'2%';
-    }
-    draggedEl=null;
-  });
-}
-function setupTouchDrag(dz){}
-
-// ══════════════════════════════════════════════
-//  SCREEN 3 — TERMINAL
-// ══════════════════════════════════════════════
-let termDone=false;
-function runTerminal(){
-  if(termDone)return;termDone=true;
-  const lines=[
-    {id:'tl0',text:'',delay:400},
-    {id:'tl1',text:'✔  miedo al conflicto detectado',delay:900},
-    {id:'tl2',text:'✔  malas costumbres repetidas × 3',delay:1700},
-    {id:'tl3',text:'✔  poca claridad en momentos ',delay:2500},
-    {id:'tl4',text:'✔  pensar solo, no como pareja',delay:3300},
-    {id:'tl5',text:'⚠  acumulación de desgaste registrada',delay:4200},
-    {id:'tl6',text:'',delay:5000},
-    {id:'tl7',text:'"Hay cosas que sí necesitan cambiar. Y lo sé."',delay:5600},
-  ];
-  document.getElementById('tcur2').classList.add('show');
-  lines.forEach(({id,text,delay})=>{
-    setTimeout(()=>{
-      const el=document.getElementById(id);
-      if(el){el.textContent=text;el.classList.add('show');}
-    },delay);
-  });
-  setTimeout(()=>{
-    document.getElementById('tcur1').classList.remove('show');
-    document.getElementById('tcur2').classList.remove('show');
-    const u=document.getElementById('s3-unlock');
-    u.style.opacity='1';u.style.pointerEvents='auto';
-  },6800);
-}
-
-// ══════════════════════════════════════════════
-//  SCREEN 4 — MEMORY MATCH
-// ══════════════════════════════════════════════
-const memPairs=[
-  {emoji:'🐄',msg:'Conectar las piezas para poder tener una mejor comunicacion 🐄'},
-  {emoji:'🌻',msg:'Quiero traer tranquilidad, no ansiedad'},
-  {emoji:'🤍',msg:'Te quiero más de lo que a veces demuestro'},
-  {emoji:'🌾',msg:'La distancia no cambia lo que siento por ti'},
-];
-let memCards=[],flipped=[],matched=0,memLocked=false;
-let memInitDone=false;
-
-function initMemory(){
-  if(memInitDone)return;memInitDone=true;
-  const grid=document.getElementById('mem-grid');
-  const deck=[...memPairs,...memPairs].map((p,i)=>({...p,id:i}));
-  // shuffle
-  for(let i=deck.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [deck[i],deck[j]]=[deck[j],deck[i]];
-  }
-  deck.forEach((p,i)=>{
-    const c=document.createElement('div');
-    c.className='mem-card';
-    c.dataset.emoji=p.emoji;c.dataset.msg=p.msg;c.dataset.pair=memPairs.indexOf(memPairs.find(x=>x.emoji===p.emoji));
-    const face=document.createElement('span');
-    face.className='face';face.textContent=p.emoji;
-    c.appendChild(face);
-    c.addEventListener('click',()=>flipCard(c));
-    c.addEventListener('touchend',e=>{e.preventDefault();flipCard(c);});
-    grid.appendChild(c);
-    memCards.push(c);
-  });
-}
-
-function flipCard(card){
-  if(memLocked||card.classList.contains('flipped')||card.classList.contains('matched'))return;
-  card.classList.add('flipped');
-  flipped.push(card);
-  if(flipped.length===2){
-    memLocked=true;
-    const [a,b]=flipped;
-    if(a.dataset.pair===b.dataset.pair){
-      setTimeout(()=>{
-        a.classList.add('matched');b.classList.add('matched');
-        matched++;
-        document.getElementById('pair-count').textContent=matched;
-        flipped=[];memLocked=false;
-        if(matched===4){
-          document.getElementById('mem-msg').textContent=memPairs.map(p=>p.msg).join(' · ');
-          document.getElementById('s4-unlock').classList.add('show');
-        }
-      },600);
-    } else {
-      setTimeout(()=>{
-        a.classList.remove('flipped');b.classList.remove('flipped');
-        flipped=[];memLocked=false;
-      },900);
+      const datos = datosCandidatos[candidatoSeleccionado];
+      document.getElementById('tituloAdv').textContent = datos.titulo;
+      document.getElementById('textoAdv').textContent = datos.texto;
+      document.getElementById('emojiPersonaje').textContent = datos.emoji;
+      document.getElementById('resultadoOtro').classList.add('activo');
     }
   }
-}
 
-// ══════════════════════════════════════════════
-//  SCREEN 5 — SOFT LINES
-// ══════════════════════════════════════════════
-const emojiList=['🐄','🌻','🤍','🌾','☁️','🌼'];
-function animSoftLines(){
-  // particles
-  const ep=document.getElementById('emo-particles');
-  if(!ep.children.length){
-    emojiList.forEach((e,i)=>{
-      const el=document.createElement('div');
-      el.className='e-particle';
-      el.textContent=e;
-      el.style.left=(10+i*14)+'%';
-      el.style.animationDuration=(3+i*0.5)+'s';
-      el.style.animationDelay=(i*0.4)+'s';
-      ep.appendChild(el);
-    });
+  function notificarCandidato() {
+    const msg = encodeURIComponent(
+      'Hola señor candidato 💌\n\nDespués de analizar cuidadosamente las propuestas del Plan de Gobierno 2026-2030\n\nHe decidido otorgar oficialmente mi voto a Nicolas ❤️\n\nAtentamente,\nLa principal votante 🗳️'
+    );
+    window.open('https://wa.me/573134029218?text=' + msg, '_blank');
   }
-  document.querySelectorAll('.sline').forEach((el,i)=>{
-    setTimeout(()=>el.classList.add('vis'),800+i*400);
-  });
-}
 
-// ══════════════════════════════════════════════
-//  CONFETTI
-// ══════════════════════════════════════════════
-function launchConfetti(){
-  const emojis=['🐄','🌻','🤍','⭐','🌾','✨','💛','🌼'];
-  for(let i=0;i<40;i++){
-    setTimeout(()=>{
-      const el=document.createElement('div');
-      el.className='confetti-piece';
-      el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-      el.style.left=Math.random()*100+'vw';
-      el.style.top='-30px';
-      el.style.fontSize=(0.8+Math.random()*1.2)+'rem';
-      el.style.animationDuration=(2+Math.random()*2)+'s';
-      el.style.animationDelay=(Math.random()*0.5)+'s';
-      document.body.appendChild(el);
-      setTimeout(()=>el.remove(),4000);
-    },i*60);
+  function cerrarModal() {
+    document.getElementById('modalProcesando').classList.remove('activo');
+    // Reset
+    candidatoSeleccionado = null;
+    document.querySelectorAll('.candidato').forEach(c => c.classList.remove('seleccionado'));
+    document.getElementById('btnVotar').disabled = true;
+    document.getElementById('pantallaProcesando').style.display = 'block';
+    document.getElementById('resultadoNicolas').classList.remove('activo');
+    document.getElementById('resultadoOtro').classList.remove('activo');
+    document.getElementById('barraProgreso').style.width = '0%';
+    document.getElementById('porcentaje').textContent = '0%';
+    document.getElementById('pasoProcesando').textContent = 'Iniciando sistema...';
+    document.getElementById('iconoProcesando').textContent = '⚙️';
   }
-}
 
-// ══════════════════════════════════════════════
-//  KEYBOARD + SWIPE
-// ══════════════════════════════════════════════
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowRight'||e.key==='ArrowDown'){if(cur<TOTAL-1)goTo(cur+1);}
-  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){if(cur>0)goTo(cur-1);}
-});
-let ty=0;
-document.addEventListener('touchstart',e=>{ty=e.touches[0].clientY;},{passive:true});
-document.addEventListener('touchend',e=>{
-  const dy=e.changedTouches[0].clientY-ty;
-  if(Math.abs(dy)>60){
-    if(dy<0&&cur<TOTAL-1)goTo(cur+1);
-    if(dy>0&&cur>0)goTo(cur-1);
+  function lanzarConfeti() {
+    const contenedor = document.getElementById('confeti');
+    contenedor.innerHTML = '';
+    const colores = ['#c9a84c','#f5d97a','#0a2463','#2d5be3','#e74c3c','#27ae60','#f39c12','#8e44ad','#ff6b6b','#ffd700'];
+    for (let i = 0; i < 120; i++) {
+      const p = document.createElement('div');
+      p.className = 'confeti-piece';
+      const dur = 2.5 + Math.random() * 2;
+      const delay = Math.random() * 1.5;
+      p.style.cssText = `
+        left: ${Math.random() * 100}%;
+        background: ${colores[Math.floor(Math.random() * colores.length)]};
+        width: ${6 + Math.random() * 8}px;
+        height: ${10 + Math.random() * 10}px;
+        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+        animation-duration: ${dur}s;
+        animation-delay: ${delay}s;
+        transform: rotate(${Math.random() * 360}deg);
+      `;
+      contenedor.appendChild(p);
+    }
+    setTimeout(() => { contenedor.innerHTML = ''; }, 5000);
   }
-});
 </script>
 </body>
 </html>
